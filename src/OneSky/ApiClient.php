@@ -7,98 +7,98 @@ use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
- * OneSky API client.
+ * OneSky API client, for the Platform API version 1.
  */
 class ApiClient
 {
     /**
-     * Onesky API endpoint
+     * The OneSky API endpoint.
      */
-    protected $_endpoint = 'https://platform.api.onesky.io/1';
+    const ENDPOINT = 'https://platform.api.onesky.io/1';
 
     /**
-     * Client authenticate token
+     * API authentiction key.
      */
-    protected $_apiKey = '';
+    protected $apiKey;
 
     /**
-     * Client authenticate secret
+     * API authentiction secret.
      */
-    protected $_secret = '';
+    protected $secret;
 
     /**
      * Resources with actions
      */
-    protected $_resources = array(
+    protected $resources = array(
         'project_groups' => array(
-            'list'      => 'GET /project-groups',
-            'show'      => 'GET /project-groups/:project_group_id',
-            'create'    => 'POST /project-groups',
-            'delete'    => 'DELETE /project-groups/:project_group_id',
-            'languages' => 'GET /project-groups/:project_group_id/languages',
+            'list'              => 'GET /project-groups',
+            'show'              => 'GET /project-groups/:project_group_id',
+            'create'            => 'POST /project-groups',
+            'delete'            => 'DELETE /project-groups/:project_group_id',
+            'languages'         => 'GET /project-groups/:project_group_id/languages',
         ),
-        'projects'       => array(
-            'list'      => 'GET /project-groups/:project_group_id/projects',
-            'show'      => 'GET /projects/:project_id',
-            'create'    => 'POST /project-groups/:project_group_id/projects',
-            'update'    => 'PUT /projects/:project_id',
-            'delete'    => 'DELETE /projects/:project_id',
-            'languages' => 'GET /projects/:project_id/languages',
+        'projects' => array(
+            'list'              => 'GET /project-groups/:project_group_id/projects',
+            'show'              => 'GET /projects/:project_id',
+            'create'            => 'POST /project-groups/:project_group_id/projects',
+            'update'            => 'PUT /projects/:project_id',
+            'delete'            => 'DELETE /projects/:project_id',
+            'languages'         => 'GET /projects/:project_id/languages',
         ),
-        'files'          => array(
-            'list'   => 'GET /projects/:project_id/files',
-            'upload' => 'POST /projects/:project_id/files',
-            'delete' => 'DELETE /projects/:project_id/files',
+        'files' => array(
+            'list'              => 'GET /projects/:project_id/files',
+            'upload'            => 'POST /projects/:project_id/files',
+            'delete'            => 'DELETE /projects/:project_id/files',
         ),
-        'translations'   => array(
-            'export' => 'GET /projects/:project_id/translations',
-            'status' => 'GET /projects/:project_id/translations/status',
+        'translations' => array(
+            'export'            => 'GET /projects/:project_id/translations',
+            'status'            => 'GET /projects/:project_id/translations/status',
         ),
-        'import_tasks'   => array(
-            'show' => 'GET /projects/:project_id/import-tasks/:import_id'
+        'import_tasks' => array(
+            'show'              => 'GET /projects/:project_id/import-tasks/:import_id'
         ),
-        'quotations'     => array(
-            'show' => 'GET /projects/:project_id/quotations'
+        'quotations' => array(
+            'show'              => 'GET /projects/:project_id/quotations'
         ),
-        'orders'         => array(
-            'list'   => 'GET /projects/:project_id/orders',
-            'show'   => 'GET /projects/:project_id/orders/:order_id',
-            'create' => 'POST /projects/:project_id/orders'
+        'orders' => array(
+            'list'              => 'GET /projects/:project_id/orders',
+            'show'              => 'GET /projects/:project_id/orders/:order_id',
+            'create'            => 'POST /projects/:project_id/orders'
         ),
-        'locales'        => array(
-            'list' => 'GET /locales'
+        'locales' => array(
+            'list'              => 'GET /locales'
         ),
-        'project_types'  => array(
-            'list' => 'GET /project-types'
+        'project_types' => array(
+            'list'              => 'GET /project-types'
         ),
         // See https://github.com/onesky/api-documentation-platform/blob/master/resources/phrase_collection.md
-        'phrase_collections'  => array(
-            'list' => 'GET /projects/:project_id/phrase-collections',
-            'show' => 'GET /projects/:project_id/phrase-collections/show',
+        'phrase_collections' => array(
+            'list'              => 'GET /projects/:project_id/phrase-collections',
+            'show'              => 'GET /projects/:project_id/phrase-collections/show',
             // For the import format, see https://github.com/onesky/api-documentation-platform/blob/master/reference/phrase_collection_format.md
-            'import' => 'POST /projects/:project_id/phrase-collections',
-            'delete' => 'DELETE /projects/:project_id/phrase-collections',
+            'import'            => 'POST /projects/:project_id/phrase-collections',
+            'delete'            => 'DELETE /projects/:project_id/phrase-collections',
         ),
     );
 
     /**
      * Actions to use multipart to upload file
      */
-    protected $_multiPartActions = array(
+    protected $multiPartActions = array(
         'files' => array('upload'),
     );
 
     /**
      * Actions to use multipart to upload file
      */
-    protected $_exportFileActions = array(
+    protected $exportFileActions = array(
         'translations' => array('export'),
     );
 
     /**
      * Default curl settings
      */
-    protected $_curlSettings = array(
+    protected $curlSettings = array(
         CURLOPT_RETURNTRANSFER => true,
     );
 
@@ -110,13 +110,13 @@ class ApiClient
 
     public function setApiKey($apiKey)
     {
-        $this->_apiKey = $apiKey;
+        $this->apiKey = $apiKey;
         return $this;
     }
 
     public function setSecret($secret)
     {
-        $this->_secret = $secret;
+        $this->secret = $secret;
         return $this;
     }
 
@@ -126,7 +126,7 @@ class ApiClient
      */
     public function getResources()
     {
-        return array_keys($this->_resources);
+        return array_keys($this->resources);
     }
 
     /**
@@ -136,12 +136,12 @@ class ApiClient
      */
     public function getActionsByResource($resource)
     {
-        if (!isset($this->_resources[$resource])) {
+        if (!isset($this->resources[$resource])) {
             return null; // no resource found
         }
 
         $actions = array();
-        foreach ($this->_resources[$resource] as $action => $path) {
+        foreach ($this->resources[$resource] as $action => $path) {
             $actions[] = $action;
         }
 
@@ -156,7 +156,7 @@ class ApiClient
      */
     public function isMultiPartAction($resource, $action)
     {
-        return isset($this->_multiPartActions[$resource]) && in_array($action, $this->_multiPartActions[$resource]);
+        return isset($this->multiPartActions[$resource]) && in_array($action, $this->multiPartActions[$resource]);
     }
 
     /**
@@ -167,7 +167,7 @@ class ApiClient
      */
     public function isExportFileAction($resource, $action)
     {
-        return isset($this->_exportFileActions[$resource]) && in_array($action, $this->_exportFileActions[$resource]);
+        return isset($this->exportFileActions[$resource]) && in_array($action, $this->exportFileActions[$resource]);
     }
 
     /**
@@ -212,7 +212,7 @@ class ApiClient
         $isMultiPart = $this->isMultiPartAction($resource, $action);
 
         // return response
-        return $this->_callApi($method, $path, $params, $isMultiPart);
+        return $this->callApi($method, $path, $params, $isMultiPart);
     }
 
     /**
@@ -224,12 +224,12 @@ class ApiClient
      */
     private function getRequestMethodAndPath($resource, $action, &$params)
     {
-        if (!isset($this->_resources[$resource]) || !isset($this->_resources[$resource][$action])) {
+        if (!isset($this->resources[$resource]) || !isset($this->resources[$resource][$action])) {
             throw new UnexpectedValueException('Resource path not found');
         }
 
         // get path
-        $path = $this->_resources[$resource][$action];
+        $path = $this->resources[$resource][$action];
 
         // replace variables
         $matchCount = preg_match_all("/:(\w*)/", $path, $variables);
@@ -247,9 +247,9 @@ class ApiClient
         return explode(' ', $path, 2);
     }
 
-    protected function _verifyTokenAndSecret()
+    protected function verifyTokenAndSecret()
     {
-        if (empty($this->_apiKey) || empty($this->_secret)) {
+        if (empty($this->apiKey) || empty($this->secret)) {
             throw new UnexpectedValueException('Invalid authenticate data of api key or secret');
         }
     }
@@ -263,21 +263,21 @@ class ApiClient
      * @param  boolean $isExportFile
      * @return array
      */
-    private function _callApi($method, $path, $params, $isMultiPart)
+    private function callApi($method, $path, $params, $isMultiPart)
     {
         // init session
         $ch = curl_init();
 
         // request settings
-        curl_setopt_array($ch, $this->_curlSettings); // basic settings
+        curl_setopt_array($ch, $this->curlSettings); // basic settings
 
         // url
-        $url = $this->_endpoint . $path;
+        $url = self::ENDPOINT . $path;
         if ($method === 'GET') {
-            $url .= $this->_getAuthQueryStringWithParams($params);
+            $url .= $this->getAuthQueryStringWithParams($params);
         }
         else {
-            $url .= $this->_getAuthQueryString();
+            $url .= $this->getAuthQueryString();
         }
         curl_setopt($ch, CURLOPT_URL, $url);
 
@@ -330,9 +330,9 @@ class ApiClient
         return $response;
     }
 
-    private function _getAuthQueryStringWithParams($params)
+    private function getAuthQueryStringWithParams($params)
     {
-        $queryString = $this->_getAuthQueryString();
+        $queryString = $this->getAuthQueryString();
 
         if (count($params) > 0) {
             $queryString .= '&' . http_build_query($params);
@@ -341,14 +341,14 @@ class ApiClient
         return $queryString;
     }
 
-    private function _getAuthQueryString()
+    private function getAuthQueryString()
     {
-        $this->_verifyTokenAndSecret();
+        $this->verifyTokenAndSecret();
 
         $timestamp = time();
-        $devHash = md5($timestamp . $this->_secret);
+        $devHash = md5($timestamp . $this->secret);
 
-        $queryString  = '?api_key=' . $this->_apiKey;
+        $queryString  = '?api_key=' . $this->apiKey;
         $queryString .= '&timestamp=' . $timestamp;
         $queryString .= '&dev_hash=' . $devHash;
 
