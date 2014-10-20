@@ -71,6 +71,14 @@ class ApiClient
         'project_types'  => array(
             'list' => '/project-types'
         ),
+        // See https://github.com/onesky/api-documentation-platform/blob/master/resources/phrase_collection.md
+        'phrase_collections'  => array(
+            'list' => '/projects/:project_id/phrase-collections',
+            'show' => '/projects/:project_id/phrase-collections/show',
+            // For the import format, see https://github.com/onesky/api-documentation-platform/blob/master/reference/phrase_collection_format.md
+            'import' => '/projects/:project_id/phrase-collections',
+            'delete' => '/projects/:project_id/phrase-collections',
+        ),
     );
 
     /**
@@ -92,7 +100,7 @@ class ApiClient
      */
     protected $_methods = array(
         // 'get'    => array('list', 'show', 'languages', 'export', 'status'),
-        'post'   => array('create', 'upload'),
+        'post'   => array('create', 'upload', 'import'),
         'put'    => array('update'),
         'delete' => array('delete'),
     );
