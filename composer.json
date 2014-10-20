@@ -1,5 +1,5 @@
 {
-	"name": "amyboyd/onesky-api-client",
+    "name": "amyboyd/onesky-api-client",
     "type": "library",
     "autoload": {
         "psr-0": { "OneSky\\": "src/" }

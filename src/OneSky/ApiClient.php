@@ -190,11 +190,11 @@ class ApiClient
 
     /**
      * For developers to initial request to Onesky API
-     * 
+     *
      * Example:
      *     $onesky = new Onesky_Api();
      *     $onesky->setApiKey('<api-key>')->setSecret('<api-secret>');
-     *     
+     *
      *     // To list project type
      *     $onesky->projectTypes('list');
      *
@@ -203,7 +203,7 @@ class ApiClient
      *
      *     // To upload string file
      *     $onesky->files('upload', array('project_id' => 1099, 'file' => 'path/to/file.yml', 'file_format' => 'YAML'));
-     * 
+     *
      * @param  string $fn_name Function name acted as resource name
      * @param  array  $params  Parameters passed in request
      * @return array  Response
@@ -376,5 +376,4 @@ class ApiClient
 
         return $queryString;
     }
-
 }
