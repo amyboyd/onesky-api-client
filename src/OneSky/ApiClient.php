@@ -137,12 +137,14 @@ class ApiClient
      */
     public function getActionsByResource($resource)
     {
-        if (!isset($this->_resources[$resource]))
+        if (!isset($this->_resources[$resource])) {
             return null; // no resource found
+        }
 
         $actions = array();
-        foreach ($this->_resources[$resource] as $action => $path)
+        foreach ($this->_resources[$resource] as $action => $path) {
             $actions[] = $action;
+        }
 
         return $actions;
     }
@@ -155,8 +157,9 @@ class ApiClient
     public function getMethodByAction($action)
     {
         foreach ($this->_methods as $method => $actions) {
-            if (in_array($action, $actions))
+            if (in_array($action, $actions)) {
                 return $method;
+            }
         }
 
         return 'get';
@@ -208,13 +211,15 @@ class ApiClient
     {
         // is valid resource
         $resource = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $fn_name)); // camelcase to underscore
-        if (!in_array($resource, $this->getResources()))
+        if (!in_array($resource, $this->getResources())) {
             throw new BadMethodCallException('Invalid resource');
+        }
 
         // is valid action
         $action = array_shift($params); // action name
-        if (!in_array($action, $this->getActionsByResource($resource)))
+        if (!in_array($action, $this->getActionsByResource($resource))) {
             throw new InvalidArgumentException('Invalid resource action');
+        }
 
         $params = count($params) > 0 ? array_shift($params) : array(); // parameters
 
@@ -240,8 +245,9 @@ class ApiClient
      */
     private function _getRequestPath($resource, $action, &$params)
     {
-        if (!isset($this->_resources[$resource]) || !isset($this->_resources[$resource][$action]))
+        if (!isset($this->_resources[$resource]) || !isset($this->_resources[$resource][$action])) {
             throw new UnexpectedValueException('Resource path not found');
+        }
 
         // get path
         $path = $this->_resources[$resource][$action];
@@ -250,8 +256,9 @@ class ApiClient
         $matchCount = preg_match_all("/:(\w*)/", $path, $variables);
         if ($matchCount) {
             foreach ($variables[0] as $index => $placeholder) {
-                if (!isset($params[$variables[1][$index]]))
+                if (!isset($params[$variables[1][$index]])) {
                     throw new InvalidArgumentException('Missing parameter: ' . $variables[1][$index]);
+                }
 
                 $path = str_replace($placeholder, $params[$variables[1][$index]], $path);
                 unset($params[$variables[1][$index]]); // remove parameter from $params
@@ -263,8 +270,9 @@ class ApiClient
 
     protected function _verifyTokenAndSecret()
     {
-        if (empty($this->_apiKey) || empty($this->_secret))
+        if (empty($this->_apiKey) || empty($this->_secret)) {
             throw new UnexpectedValueException('Invalid authenticate data of api key or secret');
+        }
     }
 
     /**
@@ -286,15 +294,18 @@ class ApiClient
 
         // url
         $url = $this->_endpoint . $path;
-        if ($method == 'get') // ['post', 'put', 'delete']
+        if ($method == 'get') {
             $url .= $this->_getAuthQueryStringWithParams($params);
-        else
+        }
+        else {
             $url .= $this->_getAuthQueryString();
+        }
         curl_setopt($ch, CURLOPT_URL, $url);
 
         // http header
-        if (!$isMultiPart)
+        if (!$isMultiPart) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+        }
 
         // method specific settings
         switch ($method) {
@@ -329,8 +340,9 @@ class ApiClient
         $response = curl_exec($ch);
 
         // error handling
-        if ($response === false)
+        if ($response === false) {
             throw new UnexpectedValueException(curl_error($ch));
+        }
 
         // close connection
         curl_close($ch);
@@ -343,8 +355,9 @@ class ApiClient
     {
         $queryString = $this->_getAuthQueryString();
 
-        if (count($params) > 0)
+        if (count($params) > 0) {
             $queryString .= '&' . http_build_query($params);
+        }
 
         return $queryString;
     }
