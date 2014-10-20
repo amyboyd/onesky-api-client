@@ -4,7 +4,7 @@ api-library-php5
 PHP5 library for OneSky API
 
 ## Requirements
-- PHP 5.1 or higher
+- PHP 5.3 or higher
 - CURL extension
 
 ## Installation
