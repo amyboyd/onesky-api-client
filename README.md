@@ -1,13 +1,13 @@
-api-library-php5
-================
-
-PHP5 library for OneSky API
+OneSky library for PHP
+======================
 
 ## Requirements
+
 - PHP 5.3 or higher
 - CURL extension
 
 ## Installation
+
 Download the [source file](/src/api-library-php5.php) and place it in your application
 
 ## How to use

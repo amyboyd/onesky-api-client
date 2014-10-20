@@ -1,0 +1,11 @@
+{
+	"name": "amyboyd/onesky-api-client",
+    "type": "library",
+    "autoload": {
+        "psr-0": { "OneSky\\": "src/" }
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "ext-curl": "*"
+    }
+}

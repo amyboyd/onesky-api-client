@@ -7,13 +7,8 @@ use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
- * Onesky API wrapper PHP5 library
+ * OneSky API client.
  */
-
-if (!function_exists('curl_init')) {
-  throw new Exception('OneSky needs the CURL PHP extension.');
-}
-
 class ApiClient
 {
     /**
