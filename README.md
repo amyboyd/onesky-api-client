@@ -8,12 +8,9 @@ OneSky library for PHP
 
 ## Installation
 
-Download the [source file](/src/api-library-php5.php) and place it in your application
+In your `composer.json`, require `amyboyd/onesky-api-client`.
 
 ## How to use
-**Include the class file**
-
-    require_once('/path/to/api-library-php5.php');
 
 **Create instance**
 
@@ -55,6 +52,5 @@ Download the [source file](/src/api-library-php5.php) and place it in your appli
 
 ## TODO
 
-- Submit to [Composer](https://getcomposer.org/) for easier integration
 - Test with PHPUnit
 - Implement missing resources according to [Onesky API document](https://github.com/onesky/api-documentation-platform)
