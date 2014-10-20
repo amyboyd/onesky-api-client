@@ -104,6 +104,12 @@ class ApiClient
         CURLOPT_RETURNTRANSFER => true,
     );
 
+    public function __construct($apiKey, $secret)
+    {
+        $this->setApiKey($apiKey);
+        $this->setSecret($secret);
+    }
+
     public function setApiKey($apiKey)
     {
         $this->_apiKey = $apiKey;

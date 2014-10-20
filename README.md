@@ -17,11 +17,7 @@ Download the [source file](/src/api-library-php5.php) and place it in your appli
 
 **Create instance**
 
-    $client = new Onesky_Api();
-
-**Set API key and secret**
-
-    $client->setApiKey('<api-key>')->setSecret('<api-secret>');
+    $client = new Onesky_Api('<api-key>', '<api-secret>');
 
 **Way to make request**
 
