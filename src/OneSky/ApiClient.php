@@ -31,53 +31,53 @@ class ApiClient
      */
     protected $_resources = array(
         'project_groups' => array(
-            'list'      => '/project-groups',
-            'show'      => '/project-groups/:project_group_id',
-            'create'    => '/project-groups',
-            'delete'    => '/project-groups/:project_group_id',
-            'languages' => '/project-groups/:project_group_id/languages',
+            'list'      => 'GET /project-groups',
+            'show'      => 'GET /project-groups/:project_group_id',
+            'create'    => 'POST /project-groups',
+            'delete'    => 'DELETE /project-groups/:project_group_id',
+            'languages' => 'GET /project-groups/:project_group_id/languages',
         ),
         'projects'       => array(
-            'list'      => '/project-groups/:project_group_id/projects',
-            'show'      => '/projects/:project_id',
-            'create'    => '/project-groups/:project_group_id/projects',
-            'update'    => '/projects/:project_id',
-            'delete'    => '/projects/:project_id',
-            'languages' => '/projects/:project_id/languages',
+            'list'      => 'GET /project-groups/:project_group_id/projects',
+            'show'      => 'GET /projects/:project_id',
+            'create'    => 'POST /project-groups/:project_group_id/projects',
+            'update'    => 'PUT /projects/:project_id',
+            'delete'    => 'DELETE /projects/:project_id',
+            'languages' => 'GET /projects/:project_id/languages',
         ),
         'files'          => array(
-            'list'   => '/projects/:project_id/files',
-            'upload' => '/projects/:project_id/files',
-            'delete' => '/projects/:project_id/files',
+            'list'   => 'GET /projects/:project_id/files',
+            'upload' => 'POST /projects/:project_id/files',
+            'delete' => 'DELETE /projects/:project_id/files',
         ),
         'translations'   => array(
-            'export' => '/projects/:project_id/translations',
-            'status' => '/projects/:project_id/translations/status',
+            'export' => 'GET /projects/:project_id/translations',
+            'status' => 'GET /projects/:project_id/translations/status',
         ),
         'import_tasks'   => array(
-            'show' => '/projects/:project_id/import-tasks/:import_id'
+            'show' => 'GET /projects/:project_id/import-tasks/:import_id'
         ),
         'quotations'     => array(
-            'show' => '/projects/:project_id/quotations'
+            'show' => 'GET /projects/:project_id/quotations'
         ),
         'orders'         => array(
-            'list'   => '/projects/:project_id/orders',
-            'show'   => '/projects/:project_id/orders/:order_id',
-            'create' => '/projects/:project_id/orders'
+            'list'   => 'GET /projects/:project_id/orders',
+            'show'   => 'GET /projects/:project_id/orders/:order_id',
+            'create' => 'POST /projects/:project_id/orders'
         ),
         'locales'        => array(
-            'list' => '/locales'
+            'list' => 'GET /locales'
         ),
         'project_types'  => array(
-            'list' => '/project-types'
+            'list' => 'GET /project-types'
         ),
         // See https://github.com/onesky/api-documentation-platform/blob/master/resources/phrase_collection.md
         'phrase_collections'  => array(
-            'list' => '/projects/:project_id/phrase-collections',
-            'show' => '/projects/:project_id/phrase-collections/show',
+            'list' => 'GET /projects/:project_id/phrase-collections',
+            'show' => 'GET /projects/:project_id/phrase-collections/show',
             // For the import format, see https://github.com/onesky/api-documentation-platform/blob/master/reference/phrase_collection_format.md
-            'import' => '/projects/:project_id/phrase-collections',
-            'delete' => '/projects/:project_id/phrase-collections',
+            'import' => 'POST /projects/:project_id/phrase-collections',
+            'delete' => 'DELETE /projects/:project_id/phrase-collections',
         ),
     );
 
@@ -93,16 +93,6 @@ class ApiClient
      */
     protected $_exportFileActions = array(
         'translations' => array('export'),
-    );
-
-    /**
-     * Methods of actions mapping
-     */
-    protected $_methods = array(
-        // 'get'    => array('list', 'show', 'languages', 'export', 'status'),
-        'post'   => array('create', 'upload', 'import'),
-        'put'    => array('update'),
-        'delete' => array('delete'),
     );
 
     /**
@@ -156,22 +146,6 @@ class ApiClient
         }
 
         return $actions;
-    }
-
-    /**
-     * Retrieve the corresponding method to use
-     * @param  string $action Action name
-     * @return string
-     */
-    public function getMethodByAction($action)
-    {
-        foreach ($this->_methods as $method => $actions) {
-            if (in_array($action, $actions)) {
-                return $method;
-            }
-        }
-
-        return 'get';
     }
 
     /**
@@ -232,11 +206,7 @@ class ApiClient
 
         $params = count($params) > 0 ? array_shift($params) : array(); // parameters
 
-        // get request method
-        $method = $this->getMethodByAction($action);
-
-        // get path
-        $path = $this->_getRequestPath($resource, $action, $params);
+        list($method, $path) = $this->getRequestMethodAndPath($resource, $action, $params);
 
         // is multi-part
         $isMultiPart = $this->isMultiPartAction($resource, $action);
@@ -250,9 +220,9 @@ class ApiClient
      * @param  string $resource Resource name
      * @param  string $action   Action name
      * @param  array  $params   Parameters
-     * @return string Request path
+     * @return [string,string] The request method and path.
      */
-    private function _getRequestPath($resource, $action, &$params)
+    private function getRequestMethodAndPath($resource, $action, &$params)
     {
         if (!isset($this->_resources[$resource]) || !isset($this->_resources[$resource][$action])) {
             throw new UnexpectedValueException('Resource path not found');
@@ -274,7 +244,7 @@ class ApiClient
             }
         }
 
-        return $path;
+        return explode(' ', $path, 2);
     }
 
     protected function _verifyTokenAndSecret()
@@ -303,7 +273,7 @@ class ApiClient
 
         // url
         $url = $this->_endpoint . $path;
-        if ($method == 'get') {
+        if ($method === 'GET') {
             $url .= $this->_getAuthQueryStringWithParams($params);
         }
         else {
@@ -318,7 +288,7 @@ class ApiClient
 
         // method specific settings
         switch ($method) {
-            case 'post':
+            case 'POST':
                 curl_setopt($ch, CURLOPT_POST, 1);
 
                 // requst body
@@ -332,13 +302,13 @@ class ApiClient
 
                 break;
 
-            case 'put':
+            case 'PUT':
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
 
                 break;
 
-            case 'delete':
+            case 'DELETE':
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
 
