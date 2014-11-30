@@ -14,7 +14,7 @@ In your `composer.json`, require `amyboyd/onesky-api-client`.
 
 **Create instance**
 
-    $client = new Onesky_Api('<api-key>', '<api-secret>');
+    $client = new \OneSky\ApiClient('<api-key>', '<api-secret>');
 
 **Way to make request**
 
